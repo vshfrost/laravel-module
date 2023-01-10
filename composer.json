@@ -1,0 +1,22 @@
+{
+    "name": "vshfrost/laravel-module",
+    "description": "Provides a modular structure for the Laravel based project",
+    "autoload": {
+        "psr-4": {
+            "Vshfrost\\LaravelModule\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Vlad Syniavskyi",
+            "email": "vlad.sinyavskiy@gmail.com"
+        }
+    ],
+    "require": {
+        "php": "^8.1",
+        "illuminate/contracts": "^9.0",
+        "illuminate/support": "^9.0"
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
