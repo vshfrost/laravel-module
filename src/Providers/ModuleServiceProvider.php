@@ -8,6 +8,7 @@ use Vshfrost\LaravelModule\Exceptions\StructureException;
 use Vshfrost\LaravelModule\Helpers\ReflectionHelper;
 use Vshfrost\LaravelModule\Helpers\StructureHelper;
 use Vshfrost\LaravelModule\Loaders\Contracts\ConfigLoader;
+use Vshfrost\LaravelModule\Loaders\Contracts\RouteLoader;
 
 abstract class ModuleServiceProvider extends ServiceProvider
 {
@@ -41,6 +42,7 @@ abstract class ModuleServiceProvider extends ServiceProvider
         $this->beforeLoad();
 
         $this->loadConfig();
+        $this->loadRoute();
     }
 
     /**
@@ -72,5 +74,13 @@ abstract class ModuleServiceProvider extends ServiceProvider
         if (! ($this->app instanceof CachesConfiguration && $this->app->configurationIsCached())) {
             $this->app->make(ConfigLoader::class)->load($this->module);
         }
+    }
+    
+    /**
+     * Load module routes.
+     */
+    protected function loadRoute(): void
+    {
+        $this->app->make(RouteLoader::class)->load($this->module);
     }
 }

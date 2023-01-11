@@ -6,6 +6,12 @@ use Illuminate\Support\ServiceProvider;
 use Vshfrost\LaravelModule\Enums\Config;
 use Vshfrost\LaravelModule\Loaders\ConfigLoader;
 use Vshfrost\LaravelModule\Loaders\Contracts\ConfigLoader as ConfigLoaderContract;
+use Vshfrost\LaravelModule\Loaders\Contracts\RouteLoader as RouteLoaderContract;
+use Vshfrost\LaravelModule\Loaders\RouteLoader;
+use Vshfrost\LaravelModule\Services\ConfigSettingsService;
+use Vshfrost\LaravelModule\Services\Contracts\ConfigSettingsService as ConfigSettingsServiceContract;
+use Vshfrost\LaravelModule\Services\Contracts\RouteSettingsService as RouteSettingsServiceContract;
+use Vshfrost\LaravelModule\Services\RouteSettingsService;
 
 class LaravelModuleServiceProvider extends ServiceProvider
 {
@@ -18,7 +24,10 @@ class LaravelModuleServiceProvider extends ServiceProvider
      * The Laravel module loaders.
      */
     private array $packageLoaders = [
-        ConfigLoaderContract::class => ConfigLoader::class,
+        ConfigLoaderContract::class          => ConfigLoader::class,
+        ConfigSettingsServiceContract::class => ConfigSettingsService::class,
+        RouteLoaderContract::class           => RouteLoader::class,
+        RouteSettingsServiceContract::class  => RouteSettingsService::class,
     ];
 
     /**
@@ -68,7 +77,7 @@ class LaravelModuleServiceProvider extends ServiceProvider
     {
         $this->mergeConfigFrom(
             self::CONFIG_DIR . Config::ModuleFile->value, 
-            Config::ModuleKey->value
+            Config::ModuleDefaultKey->value
         );
         $this->mergeConfigFrom(
             self::CONFIG_DIR . Config::ModuleStructureFile->value, 

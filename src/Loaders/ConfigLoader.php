@@ -3,11 +3,11 @@
 namespace Vshfrost\LaravelModule\Loaders;
 
 use Illuminate\Contracts\Config\Repository as ConfigContract;
-use Illuminate\Support\Str;
 use Vshfrost\LaravelModule\Enums\Config;
 use Vshfrost\LaravelModule\Exceptions\ConfigLoaderException;
 use Vshfrost\LaravelModule\Helpers\StructureHelper;
 use Vshfrost\LaravelModule\Loaders\Contracts\ConfigLoader as ConfigLoaderContract;
+use Vshfrost\LaravelModule\Services\Contracts\ConfigSettingsService;
 
 class ConfigLoader implements ConfigLoaderContract
 {
@@ -24,9 +24,12 @@ class ConfigLoader implements ConfigLoaderContract
     /**
      * Config loader constructor.
      * @param ConfigContract $configurator
+     * @param ConfigSettingsService $settingsService
      */
-    public function __construct(protected ConfigContract $configurator)
-    { 
+    public function __construct(
+        protected ConfigContract $configurator,
+        protected ConfigSettingsService $settingsService
+    ) { 
     }
 
     /**
@@ -40,7 +43,7 @@ class ConfigLoader implements ConfigLoaderContract
 
         $this->loadBase();
         $configs = StructureHelper::contains($this->pathTo, fn (string $file) => $file !== Config::ModuleFile->value);
-        $this->loadRecursive($this->pathTo, $configs);
+        $this->loadRecursive($configs);
     }
 
     /**
@@ -50,8 +53,8 @@ class ConfigLoader implements ConfigLoaderContract
     protected function loadBase(): void
     {
         $this->set(
-            $this->configKey(Str::beforeLast(Config::ModuleFile->value, '.')), 
-            Config::ModuleKey->value, 
+            $this->settingsService->key($this->module, Config::ModuleKey->value),
+            Config::ModuleDefaultKey->value, 
             $this->pathTo . Config::ModuleFile->value
         );
     }
@@ -59,23 +62,25 @@ class ConfigLoader implements ConfigLoaderContract
     /**
      * Load all module configuration.
      * 
-     * @param string $pathTo
      * @param array $configs
+     * @param string $inFolder
      */
-    protected function loadRecursive(string $pathTo, array $configs): void
+    protected function loadRecursive(array $configs, string $inFolder = ''): void
     {
-        $isTreeStructure = config($this->configKey('module.config.tree_structure'));
+        $isTreeStructure = $this->settingsService->isTreeStructure($this->module);
         foreach ($configs as $config) {
-            $path = "$pathTo$config";
+            $relativeConfigPath = "$inFolder$config";
+            $fullPath           = "$this->pathTo$relativeConfigPath";
 
-            if (!is_dir($path)) {
-                $configKey = $this->configKey(Str::beforeLast($config, '.'), $this->configKeyPrefix($pathTo));
-                $this->set($configKey, $configKey, $path);
+            if (!is_dir($fullPath)) {
+                $configKey = $this->settingsService->keyByPath($this->module, $relativeConfigPath);
+                $this->set($configKey, $configKey, $fullPath);
             }
 
             if ($isTreeStructure) {
-                $path .= DIRECTORY_SEPARATOR;
-                $this->loadRecursive($path, StructureHelper::contains($path));
+                $relativeConfigPath .= DIRECTORY_SEPARATOR;
+                $fullPath           .= DIRECTORY_SEPARATOR;
+                $this->loadRecursive(StructureHelper::contains($fullPath), $relativeConfigPath);
             }
         }
     }
@@ -84,19 +89,18 @@ class ConfigLoader implements ConfigLoaderContract
      * Configuration setter.
      * 
      * @param string $moduleKey
-     * @param string $key
+     * @param string $loadedKey
      * @param string $path
      * 
      * @throws ConfigLoaderException
      */
-    protected function set(string $moduleKey, string $key, string $path): void
+    protected function set(string $moduleKey, string $loadedKey, string $path): void
     {
         try {
             $this->configurator->set(
                 $moduleKey, 
                 array_merge(
-                    $this->configurator->get($key, []),
-                    $this->configurator->get($moduleKey, []),
+                    $this->configurator->get($loadedKey, []),
                     file_exists($path) ? require $path : []
                 )
             );
@@ -115,28 +119,5 @@ class ConfigLoader implements ConfigLoaderContract
     {
         $this->module = $module;
         $this->pathTo = StructureHelper::configPath($this->module);
-    }
-
-    /**
-     * Generate configuration key.
-     * 
-     * @param string $key
-     * @param string|null $prefix
-     * @return string
-     */
-    protected function configKey(string $key, string $prefix = ''): string
-    {
-        return $this->module . config(Config::ModuleStructureKey->value . '.config.delimeter') . "$prefix$key";
-    }
-    
-    /**
-     * Generate configuration key prefix.
-     * 
-     * @param string $prefix
-     * @return string
-     */
-    protected function configKeyPrefix(string $prefix): string
-    {
-        return str_replace(DIRECTORY_SEPARATOR, '.', Str::after($prefix, $this->pathTo));
     }
 }

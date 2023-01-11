@@ -15,9 +15,14 @@ enum Config: string
     case ModuleStructureFile = 'structure.php';
 
     /**
+     * Module configuration key.
+     */
+    case ModuleKey           = 'module';
+    
+    /**
      * Default module configuration key.
      */
-    case ModuleKey           = 'module.default';
+    case ModuleDefaultKey    = 'module.default';
 
     /**
      * Module structure configuration key.

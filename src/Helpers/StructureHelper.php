@@ -27,6 +27,17 @@ class StructureHelper
     }
 
     /**
+     * Get path to the module routes folder.
+     * 
+     * @param string $module
+     * @return string 
+     */
+    public static function routesPath(string $module): string 
+    {
+        return self::modulePath($module, config(Config::ModuleStructureKey->value . '.path.routes'));
+    }
+
+    /**
      * Get module name by the path to the module service provider.
      * 
      * @param string $moduleProviderPath
