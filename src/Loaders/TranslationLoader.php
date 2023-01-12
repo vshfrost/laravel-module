@@ -10,14 +10,17 @@ use Vshfrost\LaravelModule\Services\Contracts\TranslationSettingsService as Sett
 class TranslationLoader extends BaseLoader implements TranslationLoaderContract
 {
     /**
+     * Project translator.
+     */
+    protected TranslationContract $translator;
+
+    /**
      * Translation loader constructor.
-     * @param TranslationContract $translator
      * @param SettingsServiceContract $settingsService
      */
-    public function __construct(
-        protected TranslationContract $translator,
-        protected SettingsServiceContract $settingsService
-    ) { 
+    public function __construct(protected SettingsServiceContract $settingsService) 
+    { 
+        $this->translator = app('translator');
     }
 
     /**

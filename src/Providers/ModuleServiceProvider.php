@@ -8,6 +8,7 @@ use Vshfrost\LaravelModule\Exceptions\StructureException;
 use Vshfrost\LaravelModule\Helpers\ReflectionHelper;
 use Vshfrost\LaravelModule\Helpers\StructureHelper;
 use Vshfrost\LaravelModule\Loaders\Contracts\ConfigLoader;
+use Vshfrost\LaravelModule\Loaders\Contracts\MigrationLoader;
 use Vshfrost\LaravelModule\Loaders\Contracts\RouteLoader;
 use Vshfrost\LaravelModule\Loaders\Contracts\TranslationLoader;
 
@@ -43,6 +44,7 @@ abstract class ModuleServiceProvider extends ServiceProvider
         $this->beforeLoad();
 
         $this->loadConfig();
+        $this->loadMigration();
         $this->loadRoute();
         $this->loadTranslation();
     }
@@ -76,6 +78,17 @@ abstract class ModuleServiceProvider extends ServiceProvider
         if (! ($this->app instanceof CachesConfiguration && $this->app->configurationIsCached())) {
             $this->app->make(ConfigLoader::class)->load($this->module);
         }
+    }
+
+    /**
+     * Load module translations.
+     */
+    protected function loadMigration(): void
+    {
+        $this->callAfterResolving(
+            'migrator',
+            fn () => $this->app->make(MigrationLoader::class)->load($this->module)
+        );
     }
     
     /**

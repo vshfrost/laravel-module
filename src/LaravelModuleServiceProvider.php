@@ -6,8 +6,10 @@ use Illuminate\Support\ServiceProvider;
 use Vshfrost\LaravelModule\Enums\Config;
 use Vshfrost\LaravelModule\Loaders\ConfigLoader;
 use Vshfrost\LaravelModule\Loaders\Contracts\ConfigLoader as ConfigLoaderContract;
+use Vshfrost\LaravelModule\Loaders\Contracts\MigrationLoader as MigrationLoaderContract;
 use Vshfrost\LaravelModule\Loaders\Contracts\RouteLoader as RouteLoaderContract;
 use Vshfrost\LaravelModule\Loaders\Contracts\TranslationLoader as TranslationLoaderContract;
+use Vshfrost\LaravelModule\Loaders\MigrationLoader;
 use Vshfrost\LaravelModule\Loaders\RouteLoader;
 use Vshfrost\LaravelModule\Loaders\TranslationLoader;
 use Vshfrost\LaravelModule\Services\ConfigSettingsService;
@@ -30,6 +32,7 @@ class LaravelModuleServiceProvider extends ServiceProvider
     private array $packageLoaders = [
         ConfigLoaderContract::class               => ConfigLoader::class,
         ConfigSettingsServiceContract::class      => ConfigSettingsService::class,
+        MigrationLoaderContract::class            => MigrationLoader::class,
         RouteLoaderContract::class                => RouteLoader::class,
         RouteSettingsServiceContract::class       => RouteSettingsService::class,
         TranslationLoaderContract::class          => TranslationLoader::class,

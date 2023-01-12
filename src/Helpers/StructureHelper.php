@@ -25,6 +25,17 @@ class StructureHelper
     {
         return self::modulePath($module, config(Config::ModuleStructureKey->value . '.path.config'));
     }
+    
+    /**
+     * Get path to the module migrations folder.
+     * 
+     * @param string $module
+     * @return string 
+     */
+    public static function migrationsPath(string $module): string 
+    {
+        return self::modulePath($module, config(Config::ModuleStructureKey->value . '.path.database.migrations'));
+    }
 
     /**
      * Get path to the module routes folder.
