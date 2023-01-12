@@ -2,10 +2,10 @@
 
 namespace Vshfrost\LaravelModule\Loaders\Contracts;
 
-interface ConfigLoader
+interface TranslationLoader
 {
     /**
-     * Load configuration.
+     * Load translation.
      * 
      * @param string $module
      */

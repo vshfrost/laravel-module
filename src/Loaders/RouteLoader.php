@@ -8,37 +8,23 @@ use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Route;
 use Vshfrost\LaravelModule\Helpers\StructureHelper;
 use Vshfrost\LaravelModule\Loaders\Contracts\RouteLoader as RouteLoaderContract;
-use Vshfrost\LaravelModule\Services\Contracts\RouteSettingsService;
+use Vshfrost\LaravelModule\Services\Contracts\RouteSettingsService as SettingsServiceContract;
 
-class RouteLoader implements RouteLoaderContract
+class RouteLoader extends BaseLoader implements RouteLoaderContract
 {
     /**
-     * Module name.
-     */
-    private string $module = '';
-
-    /**
-     * Path to route directory.
-     */
-    private string $pathTo = '';
-
-    /**
      * Route loader constructor.
-     * @param RouteSettingsService $settingsService
+     * @param SettingsServiceContract $settingsService
      */
-    public function __construct(protected RouteSettingsService $settingsService) 
+    public function __construct(protected SettingsServiceContract $settingsService) 
     { 
     }
 
     /**
-     * Load routes.
-     * 
-     * @param string $module
+     * Handle routes loader logic.
      */
-    public function load(string $module): void 
+    protected function handle(): void 
     {
-        $this->setLoaderProps($module);
-
         $routes = StructureHelper::contains($this->pathTo, fn (string $file) => !is_dir("$this->pathTo$file"));
         $this->loadFrom($routes);
     }
@@ -90,14 +76,13 @@ class RouteLoader implements RouteLoaderContract
     }
 
     /**
-     * Set route loader properties.
-     * Will be set module name, path to routes.
+     * Get path to content are being loaded.
      * 
      * @param string $module
+     * @return string
      */
-    protected function setLoaderProps(string $module): void
+    protected function pathToLoadingContent(string $module): string
     {
-        $this->module = $module;
-        $this->pathTo = StructureHelper::routesPath($this->module);
+        return StructureHelper::routesPath($module);
     }
 }

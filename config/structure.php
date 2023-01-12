@@ -160,29 +160,4 @@ return [
 
         'delimeter' => '::',
     ],
-
-    /*
-    |--------------------------------------------------------------------------
-    | Translation
-    |--------------------------------------------------------------------------
-    |
-    | Special structure for translations.
-    |
-    */
-
-    'translation' => [
-
-        /*
-        |----------------------------------------------------------------------
-        | Delimeter
-        |----------------------------------------------------------------------
-        |
-        | Delimeter between module name and translation value path.
-        | Means that:
-        | trans('Module<delimeter>translation.<key>')
-        |
-        */
-
-        'delimeter' => '::',
-    ],
 ];

@@ -9,6 +9,7 @@ use Vshfrost\LaravelModule\Helpers\ReflectionHelper;
 use Vshfrost\LaravelModule\Helpers\StructureHelper;
 use Vshfrost\LaravelModule\Loaders\Contracts\ConfigLoader;
 use Vshfrost\LaravelModule\Loaders\Contracts\RouteLoader;
+use Vshfrost\LaravelModule\Loaders\Contracts\TranslationLoader;
 
 abstract class ModuleServiceProvider extends ServiceProvider
 {
@@ -43,6 +44,7 @@ abstract class ModuleServiceProvider extends ServiceProvider
 
         $this->loadConfig();
         $this->loadRoute();
+        $this->loadTranslation();
     }
 
     /**
@@ -82,5 +84,16 @@ abstract class ModuleServiceProvider extends ServiceProvider
     protected function loadRoute(): void
     {
         $this->app->make(RouteLoader::class)->load($this->module);
+    }
+    
+    /**
+     * Load module translations.
+     */
+    protected function loadTranslation(): void
+    {
+        $this->callAfterResolving(
+            'translator',
+            fn () => $this->app->make(TranslationLoader::class)->load($this->module)
+        );
     }
 }

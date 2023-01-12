@@ -7,11 +7,15 @@ use Vshfrost\LaravelModule\Enums\Config;
 use Vshfrost\LaravelModule\Loaders\ConfigLoader;
 use Vshfrost\LaravelModule\Loaders\Contracts\ConfigLoader as ConfigLoaderContract;
 use Vshfrost\LaravelModule\Loaders\Contracts\RouteLoader as RouteLoaderContract;
+use Vshfrost\LaravelModule\Loaders\Contracts\TranslationLoader as TranslationLoaderContract;
 use Vshfrost\LaravelModule\Loaders\RouteLoader;
+use Vshfrost\LaravelModule\Loaders\TranslationLoader;
 use Vshfrost\LaravelModule\Services\ConfigSettingsService;
 use Vshfrost\LaravelModule\Services\Contracts\ConfigSettingsService as ConfigSettingsServiceContract;
 use Vshfrost\LaravelModule\Services\Contracts\RouteSettingsService as RouteSettingsServiceContract;
+use Vshfrost\LaravelModule\Services\Contracts\TranslationSettingsService as TranslationSettingsServiceContract;
 use Vshfrost\LaravelModule\Services\RouteSettingsService;
+use Vshfrost\LaravelModule\Services\TranslationSettingsService;
 
 class LaravelModuleServiceProvider extends ServiceProvider
 {
@@ -24,10 +28,12 @@ class LaravelModuleServiceProvider extends ServiceProvider
      * The Laravel module loaders.
      */
     private array $packageLoaders = [
-        ConfigLoaderContract::class          => ConfigLoader::class,
-        ConfigSettingsServiceContract::class => ConfigSettingsService::class,
-        RouteLoaderContract::class           => RouteLoader::class,
-        RouteSettingsServiceContract::class  => RouteSettingsService::class,
+        ConfigLoaderContract::class               => ConfigLoader::class,
+        ConfigSettingsServiceContract::class      => ConfigSettingsService::class,
+        RouteLoaderContract::class                => RouteLoader::class,
+        RouteSettingsServiceContract::class       => RouteSettingsService::class,
+        TranslationLoaderContract::class          => TranslationLoader::class,
+        TranslationSettingsServiceContract::class => TranslationSettingsService::class,
     ];
 
     /**

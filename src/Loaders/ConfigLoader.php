@@ -7,40 +7,26 @@ use Vshfrost\LaravelModule\Enums\Config;
 use Vshfrost\LaravelModule\Exceptions\ConfigLoaderException;
 use Vshfrost\LaravelModule\Helpers\StructureHelper;
 use Vshfrost\LaravelModule\Loaders\Contracts\ConfigLoader as ConfigLoaderContract;
-use Vshfrost\LaravelModule\Services\Contracts\ConfigSettingsService;
+use Vshfrost\LaravelModule\Services\Contracts\ConfigSettingsService as SettingsServiceContract;
 
-class ConfigLoader implements ConfigLoaderContract
+class ConfigLoader extends BaseLoader implements ConfigLoaderContract
 {
-    /**
-     * Module name.
-     */
-    private string $module = '';
-
-    /**
-     * Path to config directory.
-     */
-    private string $pathTo = '';
-
     /**
      * Config loader constructor.
      * @param ConfigContract $configurator
-     * @param ConfigSettingsService $settingsService
+     * @param SettingsServiceContract $settingsService
      */
     public function __construct(
         protected ConfigContract $configurator,
-        protected ConfigSettingsService $settingsService
+        protected SettingsServiceContract $settingsService
     ) { 
     }
 
     /**
-     * Load configurations.
-     * 
-     * @param string $module
+     * Handle configuration loader logic.
      */
-    public function load(string $module): void 
+    protected function handle(): void 
     {
-        $this->setLoaderProps($module);
-
         $this->loadBase();
         $configs = StructureHelper::contains($this->pathTo, fn (string $file) => $file !== Config::ModuleFile->value);
         $this->loadRecursive($configs);
@@ -110,14 +96,13 @@ class ConfigLoader implements ConfigLoaderContract
     }
 
     /**
-     * Set config loader properties.
-     * Will be set module name, path to configs.
+     * Get path to content are being loaded.
      * 
      * @param string $module
+     * @return string
      */
-    protected function setLoaderProps(string $module): void
+    protected function pathToLoadingContent(string $module): string
     {
-        $this->module = $module;
-        $this->pathTo = StructureHelper::configPath($this->module);
+        return StructureHelper::configPath($module);
     }
 }

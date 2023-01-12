@@ -36,6 +36,17 @@ class StructureHelper
     {
         return self::modulePath($module, config(Config::ModuleStructureKey->value . '.path.routes'));
     }
+    
+    /**
+     * Get path to the module lang folder.
+     * 
+     * @param string $module
+     * @return string 
+     */
+    public static function translationPath(string $module): string 
+    {
+        return self::modulePath($module, config(Config::ModuleStructureKey->value . '.path.resources.lang'));
+    }
 
     /**
      * Get module name by the path to the module service provider.

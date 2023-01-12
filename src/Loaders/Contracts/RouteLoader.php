@@ -6,6 +6,8 @@ interface RouteLoader
 {
     /**
      * Load routes.
+     * 
+     * @param string $module
      */
     public function load(string $module): void;
 }
