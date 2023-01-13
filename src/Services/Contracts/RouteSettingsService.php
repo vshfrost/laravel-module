@@ -50,6 +50,14 @@ interface RouteSettingsService
     public function middleware(string $module, string $routesType): string;
 
     /**
+     * Module middleware list.
+     * 
+     * @param string $module
+     * @return array
+     */
+    public function middlewareList(string $module): array;
+
+    /**
      * Module routes prefix.
      * 
      * @param string $module

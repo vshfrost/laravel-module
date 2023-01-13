@@ -3,6 +3,7 @@
 namespace Vshfrost\LaravelModule\Loaders;
 
 use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Contracts\Routing\Registrar as RegistrarContract;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Route;
@@ -13,11 +14,17 @@ use Vshfrost\LaravelModule\Services\Contracts\RouteSettingsService as SettingsSe
 class RouteLoader extends BaseLoader implements RouteLoaderContract
 {
     /**
+     * Router registrar.
+     */
+    protected RegistrarContract $router;
+
+    /**
      * Route loader constructor.
      * @param SettingsServiceContract $settingsService
      */
     public function __construct(protected SettingsServiceContract $settingsService) 
     { 
+        $this->router = app('router');
     }
 
     /**
@@ -27,6 +34,7 @@ class RouteLoader extends BaseLoader implements RouteLoaderContract
     {
         $routes = StructureHelper::contains($this->pathTo, fn (string $file) => !is_dir("$this->pathTo$file"));
         $this->loadFrom($routes);
+        $this->loadMiddlewares();
     }
 
     /**
@@ -73,6 +81,16 @@ class RouteLoader extends BaseLoader implements RouteLoaderContract
                 )->by($request->user()?->id ?: $request->ip())
                 : Limit::none()
         );
+    }
+
+    /**
+     * Load middlewares.
+     */
+    protected function loadMiddlewares(): void
+    {
+        foreach ($this->settingsService->middlewareList($this->module) as $alias => $middleware) {
+            $this->router->aliasMiddleware($alias, $middleware);
+        }
     }
 
     /**

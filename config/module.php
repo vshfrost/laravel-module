@@ -61,6 +61,20 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Middleware
+    |--------------------------------------------------------------------------
+    |
+    | List of middlewares.
+    | 
+    | Use the next template to bind new middleware:
+    | <alias> => <namespace>
+    |
+    */
+
+    'middleware' => [],
+
+    /*
+    |--------------------------------------------------------------------------
     | Routes
     |--------------------------------------------------------------------------
     |
@@ -94,7 +108,7 @@ return [
             | Middleware
             |------------------------------------------------------------------
             |
-            | Base middleware for all routes.
+            | Base middleware alias for all routes.
             |
             | If commented will be used generated value by template:
             | <module-name>.web

@@ -38,7 +38,7 @@ class RouteSettingsService implements RouteSettingsServiceContract
     {
         return Str::finish(
             config(
-                $this->configKey($module, $routesType, 'alias'),
+                $this->configKey($module, "routes.$routesType.alias"),
                 $this->defaultAlias($module, $routesType)
             ), 
             '.'
@@ -66,7 +66,7 @@ class RouteSettingsService implements RouteSettingsServiceContract
      */
     public function isLimitated(string $module, string $routesType): bool
     {
-        return !empty(config($this->configKey($module, $routesType, 'limit')));
+        return !empty(config($this->configKey($module, "routes.$routesType.limit")));
     }
 
     /**
@@ -78,7 +78,7 @@ class RouteSettingsService implements RouteSettingsServiceContract
      */
     public function limitPeriod(string $module, string $routesType): int
     {
-        return config($this->configKey($module, $routesType, 'limit.in'), static::DEFAULT_LIMIT_PERIOD);
+        return config($this->configKey($module, "routes.$routesType.limit.in"), static::DEFAULT_LIMIT_PERIOD);
     }
     
     /**
@@ -90,7 +90,10 @@ class RouteSettingsService implements RouteSettingsServiceContract
      */
     public function limitRequestsCount(string $module, string $routesType): int
     {
-        return config($this->configKey($module, $routesType, 'limit.count'), static::DEFAULT_LIMIT_REQUESTS_COUNT);
+        return config(
+            $this->configKey($module, "routes.$routesType.limit.count"), 
+            static::DEFAULT_LIMIT_REQUESTS_COUNT
+        );
     }
 
     /**
@@ -103,9 +106,20 @@ class RouteSettingsService implements RouteSettingsServiceContract
     public function middleware(string $module, string $routesType): string
     {
         return config(
-            $this->configKey($module, $routesType, 'middleware'),
+            $this->configKey($module, "routes.$routesType.middleware"),
             $this->defaultMiddleware($module, $routesType)
         );
+    }
+    
+    /**
+     * Module middleware list.
+     * 
+     * @param string $module
+     * @return array
+     */
+    public function middlewareList(string $module): array
+    {
+        return config($this->configKey($module, 'middleware'), []);
     }
 
     /**
@@ -130,7 +144,7 @@ class RouteSettingsService implements RouteSettingsServiceContract
     public function prefix(string $module, string $routesType): string
     {
         return config(
-            $this->configKey($module, $routesType, 'prefix'),
+            $this->configKey($module, "routes.$routesType.prefix"),
             $this->defaultPrefix($module, $routesType)
         );
     }
@@ -162,12 +176,11 @@ class RouteSettingsService implements RouteSettingsServiceContract
      * Configuration key for routes.
      * 
      * @param string $module
-     * @param string $routesType
      * @param string $key
      * @return string
      */
-    private function configKey(string $module, string $routesType, string $key): string
+    private function configKey(string $module, string $key): string
     {
-        return $this->configSettingsService->key($module, Config::ModuleKey->value . ".routes.$routesType.$key");
+        return $this->configSettingsService->key($module, Config::ModuleKey->value . ".$key");
     }
 }
