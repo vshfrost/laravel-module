@@ -4,7 +4,9 @@ namespace Vshfrost\LaravelModule;
 
 use Illuminate\Support\ServiceProvider;
 use Vshfrost\LaravelModule\Enums\Config;
+use Vshfrost\LaravelModule\Loaders\CommandLoader;
 use Vshfrost\LaravelModule\Loaders\ConfigLoader;
+use Vshfrost\LaravelModule\Loaders\Contracts\CommandLoader as CommandLoaderContract;
 use Vshfrost\LaravelModule\Loaders\Contracts\ConfigLoader as ConfigLoaderContract;
 use Vshfrost\LaravelModule\Loaders\Contracts\MigrationLoader as MigrationLoaderContract;
 use Vshfrost\LaravelModule\Loaders\Contracts\RouteLoader as RouteLoaderContract;
@@ -12,7 +14,9 @@ use Vshfrost\LaravelModule\Loaders\Contracts\TranslationLoader as TranslationLoa
 use Vshfrost\LaravelModule\Loaders\MigrationLoader;
 use Vshfrost\LaravelModule\Loaders\RouteLoader;
 use Vshfrost\LaravelModule\Loaders\TranslationLoader;
+use Vshfrost\LaravelModule\Services\CommandSettingsService;
 use Vshfrost\LaravelModule\Services\ConfigSettingsService;
+use Vshfrost\LaravelModule\Services\Contracts\CommandSettingsService as CommandSettingsServiceContract;
 use Vshfrost\LaravelModule\Services\Contracts\ConfigSettingsService as ConfigSettingsServiceContract;
 use Vshfrost\LaravelModule\Services\Contracts\RouteSettingsService as RouteSettingsServiceContract;
 use Vshfrost\LaravelModule\Services\Contracts\TranslationSettingsService as TranslationSettingsServiceContract;
@@ -30,6 +34,8 @@ class LaravelModuleServiceProvider extends ServiceProvider
      * The Laravel module loaders.
      */
     private array $packageLoaders = [
+        CommandLoaderContract::class              => CommandLoader::class,
+        CommandSettingsServiceContract::class     => CommandSettingsService::class,
         ConfigLoaderContract::class               => ConfigLoader::class,
         ConfigSettingsServiceContract::class      => ConfigSettingsService::class,
         MigrationLoaderContract::class            => MigrationLoader::class,

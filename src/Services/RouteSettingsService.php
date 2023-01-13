@@ -119,7 +119,7 @@ class RouteSettingsService implements RouteSettingsServiceContract
      */
     public function middlewareList(string $module): array
     {
-        return config($this->configKey($module, 'middleware'), []);
+        return config($this->configKey($module, 'middlewares'), []);
     }
 
     /**

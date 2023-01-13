@@ -7,6 +7,7 @@ use Illuminate\Support\ServiceProvider;
 use Vshfrost\LaravelModule\Exceptions\StructureException;
 use Vshfrost\LaravelModule\Helpers\ReflectionHelper;
 use Vshfrost\LaravelModule\Helpers\StructureHelper;
+use Vshfrost\LaravelModule\Loaders\Contracts\CommandLoader;
 use Vshfrost\LaravelModule\Loaders\Contracts\ConfigLoader;
 use Vshfrost\LaravelModule\Loaders\Contracts\MigrationLoader;
 use Vshfrost\LaravelModule\Loaders\Contracts\RouteLoader;
@@ -44,6 +45,7 @@ abstract class ModuleServiceProvider extends ServiceProvider
         $this->beforeLoad();
 
         $this->loadConfig();
+        $this->loadCommand();
         $this->loadMigration();
         $this->loadRoute();
         $this->loadTranslation();
@@ -68,6 +70,14 @@ abstract class ModuleServiceProvider extends ServiceProvider
         $module       = StructureHelper::moduleName(ReflectionHelper::classPath($this));
 
         $this->module = $module ?: throw new StructureException('Can\'t identify the module name');
+    }
+
+    /**
+     * Load module commands.
+     */
+    protected function loadCommand(): void
+    {
+        $this->app->make(CommandLoader::class)->load($this->module);
     }
 
     /**
